@@ -1,17 +1,19 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { WeatherScreen } from './src/screens/WeatherScreen';
-import { StormDocumentationScreen } from './src/screens/StormDocumentationScreen';
+import { darkTheme, lightTheme } from './src/constants/theme';
+import { SettingsProvider } from './src/contexts/SettingsContext';
 import { CaptureStormScreen } from './src/screens/CaptureStormScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
 import { StormDetailScreen } from './src/screens/StormDetailScreen';
-import { lightTheme, darkTheme } from './src/constants/theme';
+import { StormDocumentationScreen } from './src/screens/StormDocumentationScreen';
+import { WeatherScreen } from './src/screens/WeatherScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -45,6 +47,8 @@ const TabNavigator = () => {
             iconName = focused ? 'partly-sunny' : 'partly-sunny-outline';
           } else if (route.name === 'Storms') {
             iconName = focused ? 'thunderstorm' : 'thunderstorm-outline';
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'settings' : 'settings-outline';
           } else {
             iconName = 'help-outline';
           }
@@ -74,6 +78,13 @@ const TabNavigator = () => {
           title: 'Storm Documentation',
         }}
       />
+      <Tab.Screen 
+        name="Settings" 
+        component={SettingsScreen}
+        options={{
+          title: 'Settings',
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -84,11 +95,13 @@ export default function App() {
   const currentTheme = theme === 'dark' ? darkTheme : lightTheme;
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-        <TabNavigator />
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <SettingsProvider>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+          <TabNavigator />
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </SettingsProvider>
   );
 }
