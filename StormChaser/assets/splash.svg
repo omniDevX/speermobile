@@ -1,1 +1,84 @@
- 
+<svg width="1242" height="2436" viewBox="0 0 1242 2436" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#e5e7eb;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="lightningGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1242" height="2436" fill="url(#bgGradient)"/>
+  
+  <!-- Large background clouds -->
+  <ellipse cx="300" cy="600" rx="200" ry="120" fill="url(#cloudGradient)" opacity="0.3"/>
+  <ellipse cx="500" cy="600" rx="150" ry="90" fill="url(#cloudGradient)" opacity="0.3"/>
+  <ellipse cx="650" cy="600" rx="100" ry="60" fill="url(#cloudGradient)" opacity="0.3"/>
+  
+  <ellipse cx="800" cy="400" rx="180" ry="110" fill="url(#cloudGradient)" opacity="0.2"/>
+  <ellipse cx="950" cy="400" rx="120" ry="70" fill="url(#cloudGradient)" opacity="0.2"/>
+  
+  <!-- Medium clouds -->
+  <ellipse cx="200" cy="800" rx="120" ry="80" fill="url(#cloudGradient)" opacity="0.4"/>
+  <ellipse cx="320" cy="800" rx="90" ry="60" fill="url(#cloudGradient)" opacity="0.4"/>
+  <ellipse cx="420" cy="800" rx="70" ry="50" fill="url(#cloudGradient)" opacity="0.4"/>
+  
+  <ellipse cx="900" cy="700" rx="100" ry="70" fill="url(#cloudGradient)" opacity="0.3"/>
+  <ellipse cx="1000" cy="700" rx="70" ry="50" fill="url(#cloudGradient)" opacity="0.3"/>
+  
+  <!-- Lightning bolts -->
+  <path d="M 500 300 L 450 500 L 550 500 L 500 700 L 600 700 L 550 500 L 650 500 Z" fill="url(#lightningGradient)" opacity="0.8"/>
+  <path d="M 700 200 L 650 400 L 750 400 L 700 600 L 800 600 L 750 400 L 850 400 Z" fill="url(#lightningGradient)" opacity="0.6"/>
+  
+  <!-- Rain drops -->
+  <ellipse cx="300" cy="900" rx="2" ry="8" fill="#60a5fa" opacity="0.7"/>
+  <ellipse cx="330" cy="920" rx="2" ry="8" fill="#60a5fa" opacity="0.7"/>
+  <ellipse cx="360" cy="900" rx="2" ry="8" fill="#60a5fa" opacity="0.7"/>
+  <ellipse cx="390" cy="920" rx="2" ry="8" fill="#60a5fa" opacity="0.7"/>
+  <ellipse cx="420" cy="900" rx="2" ry="8" fill="#60a5fa" opacity="0.7"/>
+  
+  <ellipse cx="800" cy="850" rx="1.5" ry="6" fill="#60a5fa" opacity="0.5"/>
+  <ellipse cx="820" cy="870" rx="1.5" ry="6" fill="#60a5fa" opacity="0.5"/>
+  <ellipse cx="840" cy="850" rx="1.5" ry="6" fill="#60a5fa" opacity="0.5"/>
+  
+  <!-- Wind lines -->
+  <path d="M 150 400 Q 250 400 350 380" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.4"/>
+  <path d="M 150 420 Q 250 420 350 400" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 150 440 Q 250 440 350 420" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.3"/>
+  
+  <!-- App Title -->
+  <text x="621" y="1200" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="url(#textGradient)">
+    Storm Chaser
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="621" y="1280" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="url(#textGradient)" opacity="0.8">
+    Meteorology App
+  </text>
+  
+  <!-- Loading indicator -->
+  <circle cx="621" cy="1400" r="30" stroke="url(#textGradient)" stroke-width="4" fill="none" opacity="0.6">
+    <animate attributeName="stroke-dasharray" values="0 200;100 100;0 200" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Small decorative elements -->
+  <circle cx="200" cy="200" r="2" fill="#ffffff" opacity="0.3"/>
+  <circle cx="1000" cy="300" r="1.5" fill="#ffffff" opacity="0.3"/>
+  <circle cx="150" cy="500" r="1" fill="#ffffff" opacity="0.3"/>
+  <circle cx="1100" cy="600" r="1.5" fill="#ffffff" opacity="0.3"/>
+  <circle cx="100" cy="700" r="1" fill="#ffffff" opacity="0.3"/>
+  <circle cx="1150" cy="800" r="1" fill="#ffffff" opacity="0.3"/>
+</svg> 

@@ -81,8 +81,8 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
     <View style={styles.container}>
       <LinearGradient
         colors={[
-          `${currentTheme.colors.surface}80`, // 40% opacity
-          `${currentTheme.colors.background}80` // 40% opacity
+          `${currentTheme.colors.surface}`, // 40% opacity
+          `${currentTheme.colors.background}` // 40% opacity
         ]}
         style={styles.gradient}
       >
