@@ -15,6 +15,7 @@ import { DynamicBackground } from '../components/DynamicBackground';
 import { WeatherCard } from '../components/WeatherCard';
 import { darkTheme, lightTheme } from '../constants/theme';
 import { useWeather } from '../hooks/useWeather';
+import { formatForecastDate } from '../utils/helpers';
 
 interface WeatherScreenProps {
   navigation: any;
@@ -197,7 +198,12 @@ export const WeatherScreen: React.FC<WeatherScreenProps> = ({ navigation }) => {
                   color={currentTheme.colors.textSecondary} 
                 />
                 <Text style={styles.locationText}>
-                  {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+                  {location.city && location.province 
+                    ? `${location.city}, ${location.province}`
+                    : location.city 
+                    ? location.city
+                    : `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`
+                  }
                 </Text>
               </View>
             )}
@@ -227,11 +233,7 @@ export const WeatherScreen: React.FC<WeatherScreenProps> = ({ navigation }) => {
               {forecast.map((day, index) => (
                 <View key={index} style={styles.forecastItem}>
                   <Text style={styles.forecastDate}>
-                    {new Date(day.date).toLocaleDateString('en-US', { 
-                      weekday: 'short',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
+                    {formatForecastDate(day.date)}
                   </Text>
                   <View style={styles.forecastWeather}>
                     <Text style={styles.forecastIcon}>{day.weatherIcon}</Text>
@@ -240,7 +242,7 @@ export const WeatherScreen: React.FC<WeatherScreenProps> = ({ navigation }) => {
                     </Text>
                   </View>
                   <Text style={styles.forecastTemp}>
-                    {day.temperature.min.toFixed(0)}° / {day.temperature.max.toFixed(0)}°
+                    {(day.temperature.min ?? 0).toFixed(0)}° / {(day.temperature.max ?? 0).toFixed(0)}°
                   </Text>
                 </View>
               ))}

@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
-import { lightTheme, darkTheme } from '../constants/theme';
-import { useColorScheme } from 'react-native';
-import { StormType, StormDocumentation, WeatherData, Location } from '../types';
+import React, { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    useColorScheme,
+    View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { darkTheme, lightTheme } from '../constants/theme';
+import { useStormDocumentation } from '../hooks/useStormDocumentation';
 import { cameraService } from '../services/camera';
 import { locationService } from '../services/location';
 import { weatherService } from '../services/weather';
-import { useStormDocumentation } from '../hooks/useStormDocumentation';
+import { Location, StormDocumentation, StormType, WeatherData } from '../types';
 import { generateId } from '../utils/helpers';
 
 interface CaptureStormScreenProps {
@@ -332,7 +332,7 @@ export const CaptureStormScreen: React.FC<CaptureStormScreenProps> = ({
             <View style={styles.weatherRow}>
               <Text style={styles.weatherLabel}>Temperature:</Text>
               <Text style={styles.weatherValue}>
-                {currentWeather.temperature.toFixed(1)}°C
+                {(currentWeather.temperature ?? 0).toFixed(1)}°C
               </Text>
             </View>
             <View style={styles.weatherRow}>
@@ -344,13 +344,13 @@ export const CaptureStormScreen: React.FC<CaptureStormScreenProps> = ({
             <View style={styles.weatherRow}>
               <Text style={styles.weatherLabel}>Wind Speed:</Text>
               <Text style={styles.weatherValue}>
-                {currentWeather.windSpeed.toFixed(1)} km/h
+                {(currentWeather.windSpeed ?? 0).toFixed(1)} km/h
               </Text>
             </View>
             <View style={styles.weatherRow}>
               <Text style={styles.weatherLabel}>Humidity:</Text>
               <Text style={styles.weatherValue}>
-                {currentWeather.humidity.toFixed(0)}%
+                {(currentWeather.humidity ?? 0).toFixed(0)}%
               </Text>
             </View>
           </View>

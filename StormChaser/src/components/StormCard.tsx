@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { darkTheme, lightTheme } from '../constants/theme';
 import { StormDocumentation } from '../types';
-import { lightTheme, darkTheme } from '../constants/theme';
-import { formatDate, getStormTypeIcon, getStormTypeColor } from '../utils/helpers';
+import { formatDate, getStormTypeIcon } from '../utils/helpers';
 
 interface StormCardProps {
   storm: StormDocumentation;
@@ -19,9 +19,19 @@ export const StormCard: React.FC<StormCardProps> = ({
 }) => {
   const currentTheme = theme === 'dark' ? darkTheme : lightTheme;
 
+  const getLocationDisplay = () => {
+    if (storm.location.city && storm.location.province) {
+      return `${storm.location.city}, ${storm.location.province}`;
+    } else if (storm.location.city) {
+      return storm.location.city;
+    } else {
+      return `${storm.location.latitude.toFixed(4)}, ${storm.location.longitude.toFixed(4)}`;
+    }
+  };
+
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: currentTheme.colors.surface,
+      backgroundColor: `${currentTheme.colors.surface}CC`, // 80% opacity
       borderRadius: currentTheme.borderRadius.md,
       margin: currentTheme.spacing.sm,
       overflow: 'hidden',
@@ -65,6 +75,11 @@ export const StormCard: React.FC<StormCardProps> = ({
       fontSize: 20,
     },
     date: {
+      fontSize: 12,
+      color: currentTheme.colors.textSecondary,
+      marginBottom: currentTheme.spacing.xs,
+    },
+    location: {
       fontSize: 12,
       color: currentTheme.colors.textSecondary,
       marginBottom: currentTheme.spacing.xs,
@@ -137,20 +152,24 @@ export const StormCard: React.FC<StormCardProps> = ({
             </View>
             
             <Text style={styles.date}>
-              {formatDate(storm.dateTime)}
+              {formatDate(storm.timestamp)}
+            </Text>
+            
+            <Text style={styles.location}>
+              📍 {getLocationDisplay()}
             </Text>
             
             <View style={styles.weatherInfo}>
               <Text style={styles.weatherIcon}>
-                {storm.weatherConditions.weatherIcon}
+                {storm.weather.weatherIcon}
               </Text>
               <Text style={styles.weatherText}>
-                {storm.weatherConditions.weatherDescription}
+                {storm.weather.weatherDescription}
               </Text>
             </View>
             
             <Text style={styles.temperature}>
-              {storm.weatherConditions.temperature.toFixed(1)}°C
+              {(storm.weather.temperature ?? 0).toFixed(1)}°C
             </Text>
           </View>
           

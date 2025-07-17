@@ -1,26 +1,18 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  TouchableOpacity,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    useColorScheme,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { lightTheme, darkTheme } from '../constants/theme';
-import { useColorScheme } from 'react-native';
+import { darkTheme, lightTheme } from '../constants/theme';
 import { StormDocumentation } from '../types';
-import { formatDate, getStormTypeIcon, getStormTypeColor } from '../utils/helpers';
-import {
-  formatTemperature,
-  formatWindSpeed,
-  formatPressure,
-  formatHumidity,
-  formatVisibility,
-  getWindDirection,
-} from '../utils/helpers';
+import { formatDate, formatHumidity, formatPressure, formatTemperature, formatVisibility, formatWindSpeed, getStormTypeIcon, getWindDirection } from '../utils/helpers';
 
 interface StormDetailScreenProps {
   navigation: any;
@@ -212,51 +204,41 @@ export const StormDetailScreen: React.FC<StormDetailScreenProps> = ({
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherLabel}>Temperature:</Text>
                 <Text style={styles.weatherValue}>
-                  {formatTemperature(storm.weatherConditions.temperature)}
+                  {formatTemperature(storm.weather.temperature)}
                 </Text>
               </View>
-              <View style={styles.weatherRow}>
-                <Text style={styles.weatherLabel}>Feels Like:</Text>
-                <Text style={styles.weatherValue}>
-                  {formatTemperature(storm.weatherConditions.feelsLike)}
-                </Text>
-              </View>
+
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherLabel}>Conditions:</Text>
                 <Text style={styles.weatherValue}>
-                  {storm.weatherConditions.weatherDescription}
+                  {storm.weather.weatherDescription}
                 </Text>
               </View>
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherLabel}>Wind Speed:</Text>
                 <Text style={styles.weatherValue}>
-                  {formatWindSpeed(storm.weatherConditions.windSpeed)} {getWindDirection(storm.weatherConditions.windDirection)}
+                  {formatWindSpeed(storm.weather.windSpeed)} {getWindDirection(storm.weather.windDirection)}
                 </Text>
               </View>
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherLabel}>Humidity:</Text>
                 <Text style={styles.weatherValue}>
-                  {formatHumidity(storm.weatherConditions.humidity)}
+                  {formatHumidity(storm.weather.humidity)}
                 </Text>
               </View>
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherLabel}>Pressure:</Text>
                 <Text style={styles.weatherValue}>
-                  {formatPressure(storm.weatherConditions.pressure)}
+                  {formatPressure(storm.weather.pressure)}
                 </Text>
               </View>
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherLabel}>Visibility:</Text>
                 <Text style={styles.weatherValue}>
-                  {formatVisibility(storm.weatherConditions.visibility)}
+                  {formatVisibility(storm.weather.visibility)}
                 </Text>
               </View>
-              <View style={styles.weatherRow}>
-                <Text style={styles.weatherLabel}>Precipitation:</Text>
-                <Text style={styles.weatherValue}>
-                  {storm.weatherConditions.precipitation.toFixed(1)} mm
-                </Text>
-              </View>
+
             </View>
           </View>
 
@@ -274,16 +256,16 @@ export const StormDetailScreen: React.FC<StormDetailScreenProps> = ({
                   {storm.location.latitude.toFixed(6)}, {storm.location.longitude.toFixed(6)}
                 </Text>
               </View>
-              {storm.location.accuracy && (
+              {storm.location.city && (
                 <View style={styles.locationRow}>
                   <Ionicons 
-                    name="compass" 
+                    name="map" 
                     size={16} 
                     color={currentTheme.colors.textSecondary}
                     style={styles.locationIcon}
                   />
                   <Text style={styles.locationText}>
-                    Accuracy: ±{Math.round(storm.location.accuracy)}m
+                    {storm.location.city}{storm.location.province ? `, ${storm.location.province}` : ''}
                   </Text>
                 </View>
               )}
@@ -305,13 +287,7 @@ export const StormDetailScreen: React.FC<StormDetailScreenProps> = ({
             <View style={styles.metadataRow}>
               <Text style={styles.metadataLabel}>Created:</Text>
               <Text style={styles.metadataValue}>
-                {formatDate(storm.createdAt)}
-              </Text>
-            </View>
-            <View style={styles.metadataRow}>
-              <Text style={styles.metadataLabel}>Last Updated:</Text>
-              <Text style={styles.metadataValue}>
-                {formatDate(storm.updatedAt)}
+                {formatDate(storm.timestamp)}
               </Text>
             </View>
             <View style={styles.metadataRow}>

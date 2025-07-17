@@ -1,15 +1,15 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { darkTheme, lightTheme } from '../constants/theme';
 import { WeatherData } from '../types';
-import { lightTheme, darkTheme } from '../constants/theme';
 import {
-  formatTemperature,
-  formatWindSpeed,
-  formatPressure,
-  formatHumidity,
-  formatVisibility,
-  getWindDirection,
+    formatHumidity,
+    formatPressure,
+    formatTemperature,
+    formatVisibility,
+    formatWindSpeed,
+    getWindDirection,
 } from '../utils/helpers';
 
 interface WeatherCardProps {
@@ -80,7 +80,10 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[currentTheme.colors.surface, currentTheme.colors.background]}
+        colors={[
+          `${currentTheme.colors.surface}80`, // 40% opacity
+          `${currentTheme.colors.background}80` // 40% opacity
+        ]}
         style={styles.gradient}
       >
         <View style={styles.header}>
@@ -97,13 +100,6 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
         </Text>
 
         <View style={styles.detailsContainer}>
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Feels Like</Text>
-            <Text style={styles.detailValue}>
-              {formatTemperature(weather.feelsLike)}
-            </Text>
-          </View>
-
           <View style={styles.detailItem}>
             <Text style={styles.detailLabel}>Humidity</Text>
             <Text style={styles.detailValue}>
@@ -129,13 +125,6 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
             <Text style={styles.detailLabel}>Visibility</Text>
             <Text style={styles.detailValue}>
               {formatVisibility(weather.visibility)}
-            </Text>
-          </View>
-
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Precipitation</Text>
-            <Text style={styles.detailValue}>
-              {weather.precipitation.toFixed(1)} mm
             </Text>
           </View>
         </View>

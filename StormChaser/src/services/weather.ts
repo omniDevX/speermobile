@@ -1,8 +1,8 @@
-import { WeatherData, Location, WeatherForecast } from '../types';
 import { API_ENDPOINTS, API_PARAMS, WEATHER_CODES } from '../constants/api';
+import { LocationData, WeatherData, WeatherForecast } from '../types';
 
 class WeatherService {
-  async getCurrentWeather(location: Location): Promise<WeatherData> {
+  async getCurrentWeather(location: LocationData): Promise<WeatherData> {
     try {
       const url = new URL(API_ENDPOINTS.WEATHER_CURRENT);
       url.searchParams.set('latitude', location.latitude.toString());
@@ -29,13 +29,11 @@ class WeatherService {
 
       return {
         temperature: current.temperature_2m,
-        feelsLike: current.apparent_temperature,
         humidity: current.relative_humidity_2m,
         windSpeed: current.wind_speed_10m,
         windDirection: current.wind_direction_10m,
         pressure: current.pressure_msl,
         visibility: current.visibility,
-        precipitation: current.precipitation,
         weatherDescription: weatherInfo.description,
         weatherIcon: weatherInfo.icon,
         timestamp: current.time,
@@ -47,7 +45,7 @@ class WeatherService {
     }
   }
 
-  async getWeatherForecast(location: Location): Promise<WeatherForecast[]> {
+  async getWeatherForecast(location: LocationData): Promise<WeatherForecast[]> {
     try {
       const url = new URL(API_ENDPOINTS.WEATHER_FORECAST);
       url.searchParams.set('latitude', location.latitude.toString());
@@ -75,8 +73,12 @@ class WeatherService {
         const weatherInfo = WEATHER_CODES[weatherCode as keyof typeof WEATHER_CODES] || 
                            { description: 'Unknown', icon: '❓' };
 
+        // Convert the date string to a proper date object in local timezone
+        const dateString = daily.time[i];
+        const localDate = new Date(dateString + 'T00:00:00');
+
         forecasts.push({
-          date: daily.time[i],
+          date: localDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
           temperature: {
             min: daily.temperature_2m_min[i],
             max: daily.temperature_2m_max[i],
@@ -99,13 +101,11 @@ class WeatherService {
   private getMockWeatherData(): WeatherData {
     return {
       temperature: 22.5,
-      feelsLike: 24.2,
       humidity: 65,
       windSpeed: 12.3,
       windDirection: 180,
       pressure: 1013.25,
       visibility: 10000,
-      precipitation: 0,
       weatherDescription: 'Partly cloudy',
       weatherIcon: '⛅',
       timestamp: new Date().toISOString(),
