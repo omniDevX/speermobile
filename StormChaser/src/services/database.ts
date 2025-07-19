@@ -1,16 +1,21 @@
 import * as SQLite from 'expo-sqlite';
-import { StormDocumentation, WeatherData, Location } from '../types';
+import { LocationData, StormDocumentation, WeatherData } from '../types';
 
 class DatabaseService {
   private db: SQLite.SQLiteDatabase | null = null;
+  private isInitialized = false;
 
   async initDatabase(): Promise<void> {
+    if (this.isInitialized) return;
+    
     try {
       this.db = await SQLite.openDatabaseAsync('stormchaser.db');
       await this.createTables();
+      this.isInitialized = true;
     } catch (error) {
       console.error('Error initializing database:', error);
-      throw error;
+      // Don't throw error, just log it and continue
+      // The app can still function without database
     }
   }
 
@@ -22,23 +27,24 @@ class DatabaseService {
         id TEXT PRIMARY KEY,
         photo_uri TEXT NOT NULL,
         temperature REAL NOT NULL,
-        feels_like REAL NOT NULL,
         humidity REAL NOT NULL,
         wind_speed REAL NOT NULL,
         wind_direction REAL NOT NULL,
         pressure REAL NOT NULL,
         visibility REAL NOT NULL,
-        precipitation REAL NOT NULL,
         weather_description TEXT NOT NULL,
         weather_icon TEXT NOT NULL,
         latitude REAL NOT NULL,
         longitude REAL NOT NULL,
-        accuracy REAL,
-        date_time TEXT NOT NULL,
+        city TEXT,
+        province TEXT,
+        country TEXT,
+        timestamp TEXT NOT NULL,
         notes TEXT NOT NULL,
         storm_type TEXT NOT NULL,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
+        device_model TEXT,
+        app_version TEXT,
+        photo_size INTEGER
       );
     `;
 
@@ -46,69 +52,79 @@ class DatabaseService {
       await this.db.execAsync(createStormTable);
     } catch (error) {
       console.error('Error creating tables:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   }
 
   async saveStormDocumentation(storm: StormDocumentation): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db || !this.isInitialized) {
+      console.warn('Database not available, skipping save');
+      return;
+    }
 
     const query = `
       INSERT OR REPLACE INTO storm_documentation (
-        id, photo_uri, temperature, feels_like, humidity, wind_speed, 
-        wind_direction, pressure, visibility, precipitation, weather_description, 
-        weather_icon, latitude, longitude, accuracy, date_time, notes, 
-        storm_type, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        id, photo_uri, temperature, humidity, wind_speed, 
+        wind_direction, pressure, visibility, weather_description, 
+        weather_icon, latitude, longitude, city, province, country,
+        timestamp, notes, storm_type, device_model, app_version, photo_size
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const values = [
       storm.id,
       storm.photoUri,
-      storm.weatherConditions.temperature,
-      storm.weatherConditions.feelsLike,
-      storm.weatherConditions.humidity,
-      storm.weatherConditions.windSpeed,
-      storm.weatherConditions.windDirection,
-      storm.weatherConditions.pressure,
-      storm.weatherConditions.visibility,
-      storm.weatherConditions.precipitation,
-      storm.weatherConditions.weatherDescription,
-      storm.weatherConditions.weatherIcon,
+      storm.weather.temperature,
+      storm.weather.humidity,
+      storm.weather.windSpeed,
+      storm.weather.windDirection,
+      storm.weather.pressure,
+      storm.weather.visibility,
+      storm.weather.weatherDescription,
+      storm.weather.weatherIcon,
       storm.location.latitude,
       storm.location.longitude,
-      storm.location.accuracy || null,
-      storm.dateTime,
+      storm.location.city || null,
+      storm.location.province || null,
+      storm.location.country || null,
+      storm.timestamp,
       storm.notes,
       storm.stormType,
-      storm.createdAt,
-      storm.updatedAt,
+      storm.metadata.deviceModel,
+      storm.metadata.appVersion,
+      storm.metadata.photoSize,
     ];
 
     try {
       await this.db.runAsync(query, values);
     } catch (error) {
       console.error('Error saving storm documentation:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   }
 
   async getAllStormDocumentations(): Promise<StormDocumentation[]> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db || !this.isInitialized) {
+      console.warn('Database not available, returning empty array');
+      return [];
+    }
 
-    const query = 'SELECT * FROM storm_documentation ORDER BY created_at DESC';
+    const query = 'SELECT * FROM storm_documentation ORDER BY timestamp DESC';
     
     try {
       const result = await this.db.getAllAsync(query);
       return result.map(this.mapRowToStormDocumentation);
     } catch (error) {
       console.error('Error fetching storm documentations:', error);
-      throw error;
+      return [];
     }
   }
 
   async getStormDocumentationById(id: string): Promise<StormDocumentation | null> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db || !this.isInitialized) {
+      console.warn('Database not available, returning null');
+      return null;
+    }
 
     const query = 'SELECT * FROM storm_documentation WHERE id = ?';
     
@@ -117,12 +133,15 @@ class DatabaseService {
       return result ? this.mapRowToStormDocumentation(result) : null;
     } catch (error) {
       console.error('Error fetching storm documentation by id:', error);
-      throw error;
+      return null;
     }
   }
 
   async deleteStormDocumentation(id: string): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db || !this.isInitialized) {
+      console.warn('Database not available, skipping delete');
+      return;
+    }
 
     const query = 'DELETE FROM storm_documentation WHERE id = ?';
     
@@ -130,42 +149,44 @@ class DatabaseService {
       await this.db.runAsync(query, [id]);
     } catch (error) {
       console.error('Error deleting storm documentation:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   }
 
   private mapRowToStormDocumentation(row: any): StormDocumentation {
-    const weatherConditions: WeatherData = {
+    const weather: WeatherData = {
       temperature: row.temperature,
-      feelsLike: row.feels_like,
       humidity: row.humidity,
       windSpeed: row.wind_speed,
       windDirection: row.wind_direction,
       pressure: row.pressure,
       visibility: row.visibility,
-      precipitation: row.precipitation,
       weatherDescription: row.weather_description,
       weatherIcon: row.weather_icon,
-      timestamp: row.date_time,
+      timestamp: row.timestamp,
     };
 
-    const location: Location = {
+    const location: LocationData = {
       latitude: row.latitude,
       longitude: row.longitude,
-      accuracy: row.accuracy,
-      timestamp: row.date_time,
+      city: row.city,
+      province: row.province,
+      country: row.country,
     };
 
     return {
       id: row.id,
+      stormType: row.storm_type,
       photoUri: row.photo_uri,
-      weatherConditions,
       location,
-      dateTime: row.date_time,
+      weather,
       notes: row.notes,
-      stormType: row.storm_type as any,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      timestamp: row.timestamp,
+      metadata: {
+        deviceModel: row.device_model || 'Unknown',
+        appVersion: row.app_version || '1.0.0',
+        photoSize: row.photo_size || 0,
+      },
     };
   }
 }

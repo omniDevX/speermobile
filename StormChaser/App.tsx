@@ -3,10 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { useColorScheme } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { darkTheme, lightTheme } from './src/constants/theme';
 import { SettingsProvider } from './src/contexts/SettingsContext';
 import { CaptureStormScreen } from './src/screens/CaptureStormScreen';
@@ -14,9 +15,45 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { StormDetailScreen } from './src/screens/StormDetailScreen';
 import { StormDocumentationScreen } from './src/screens/StormDocumentationScreen';
 import { WeatherScreen } from './src/screens/WeatherScreen';
+import { databaseService } from './src/services/database';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+
+
+const styles = StyleSheet.create({
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#1a1a2e',
+  },
+  errorTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#ccc',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  retryButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
 
 const StormStack = () => {
   return (
@@ -93,15 +130,69 @@ export default function App() {
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? 'dark' : 'light';
   const currentTheme = theme === 'dark' ? darkTheme : lightTheme;
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        // Initialize database
+        await databaseService.initDatabase();
+        setIsInitialized(true);
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+        setInitError(error instanceof Error ? error.message : 'Initialization failed');
+        // Still set as initialized to show error UI
+        setIsInitialized(true);
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  if (!isInitialized) {
+    return (
+      <SafeAreaProvider>
+        <View style={[styles.errorContainer, { backgroundColor: currentTheme.colors.background }]}>
+          <Text style={[styles.errorTitle, { color: currentTheme.colors.text }]}>
+            Initializing...
+          </Text>
+        </View>
+      </SafeAreaProvider>
+    );
+  }
+
+  if (initError) {
+    return (
+      <SafeAreaProvider>
+        <View style={[styles.errorContainer, { backgroundColor: currentTheme.colors.background }]}>
+          <Text style={[styles.errorTitle, { color: currentTheme.colors.text }]}>
+            Initialization Error
+          </Text>
+          <Text style={[styles.errorText, { color: currentTheme.colors.textSecondary }]}>
+            {initError}
+          </Text>
+          <TouchableOpacity
+            style={[styles.retryButton, { backgroundColor: currentTheme.colors.primary }]}
+            onPress={() => window.location.reload()}
+          >
+            <Text style={styles.retryButtonText}>Restart App</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaProvider>
+    );
+  }
 
   return (
-    <SettingsProvider>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-          <TabNavigator />
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </SettingsProvider>
+    <ErrorBoundary>
+      <SettingsProvider>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+            <TabNavigator />
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </SettingsProvider>
+    </ErrorBoundary>
   );
 }

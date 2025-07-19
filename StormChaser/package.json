@@ -11,7 +11,10 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "generate-assets": "node scripts/generate-assets.js",
-    "generate-splash": "node scripts/create-simple-splash.js"
+    "generate-splash": "node scripts/create-simple-splash.js",
+    "test-production": "node scripts/test-production-build.js",
+    "build-preview": "eas build --platform android --profile preview",
+    "build-production": "eas build --platform android --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -20,7 +23,7 @@
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/stack": "^7.4.2",
-    "expo": "~53.0.17",
+    "expo": "53.0.20",
     "expo-av": "^15.1.7",
     "expo-camera": "^16.1.11",
     "expo-constants": "^17.1.7",

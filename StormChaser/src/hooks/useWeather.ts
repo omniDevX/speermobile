@@ -7,7 +7,7 @@ export const useWeather = () => {
   const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null);
   const [forecast, setForecast] = useState<ForecastData[]>([]);
   const [location, setLocation] = useState<LocationData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false initially
   const [error, setError] = useState<string | null>(null);
 
   const refreshLocation = async () => {
@@ -38,7 +38,9 @@ export const useWeather = () => {
       setForecast(convertedForecast);
       
     } catch (err) {
+      console.error('Weather refresh error:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
+      // Don't throw the error, just set it in state
     } finally {
       setLoading(false);
     }
@@ -48,6 +50,7 @@ export const useWeather = () => {
     if (!location) return;
     
     try {
+      setError(null);
       const weatherLocation = {
         latitude: location.latitude,
         longitude: location.longitude,
@@ -65,12 +68,18 @@ export const useWeather = () => {
       }));
       setForecast(convertedForecast);
     } catch (err) {
+      console.error('Weather refresh error:', err);
       setError(err instanceof Error ? err.message : 'Failed to refresh weather data');
     }
   };
 
   useEffect(() => {
-    refreshLocation();
+    // Delay the initial weather fetch to allow app to fully initialize
+    const timer = setTimeout(() => {
+      refreshLocation();
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return {
