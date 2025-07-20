@@ -1,4 +1,4 @@
-# Storm Chaser - Mobile Meteorology App
+# Storm Chaser v2 - Mobile Meteorology App
 
 A comprehensive mobile application for storm chasing hobbyist meteorologists, built with React Native and Expo. This app allows users to track weather conditions, capture storm documentation with photos, and maintain a local database of meteorological events.
 
