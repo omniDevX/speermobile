@@ -1,5 +1,6 @@
-<img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/724dca95-ed2c-4356-95a6-4d8bf13a1933" />
 # Storm Chaser - Mobile Meteorology App
+
+<img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/724dca95-ed2c-4356-95a6-4d8bf13a1933" />
 
 A comprehensive mobile application for storm chasing hobbyist meteorologists, built with React Native and Expo. This app allows users to track weather conditions, capture storm documentation with photos, and maintain a local database of meteorological events.
 
