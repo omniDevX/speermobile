@@ -1,4 +1,4 @@
-# Storm Chaser v2 - Mobile Meteorology App
+# Storm Chaser - Mobile Meteorology App
 
 A comprehensive mobile application for storm chasing hobbyist meteorologists, built with React Native and Expo. This app allows users to track weather conditions, capture storm documentation with photos, and maintain a local database of meteorological events.
 
@@ -12,7 +12,7 @@ A comprehensive mobile application for storm chasing hobbyist meteorologists, bu
 - **Geolocation Services**: GPS-based location tracking
 - **Intuitive Navigation**: Bottom tab navigation with stack navigation for detailed views
 
-### Bonus Features (Senior Level)
+### Bonus Features
 - **Weather Forecast Integration**: 7-day weather forecast
 - **Dark Mode Support**: Automatic theme switching based on system preferences
 - **Pull-to-Refresh**: Refresh weather data and storm documentation
@@ -22,7 +22,7 @@ A comprehensive mobile application for storm chasing hobbyist meteorologists, bu
 
 ## 🛠 Technology Stack
 
-- **Framework**: React Native with Expo SDK 50
+- **Framework**: React Native with Expo SDK 53
 - **Language**: TypeScript
 - **Navigation**: React Navigation v6
 - **Database**: Expo SQLite
@@ -32,7 +32,7 @@ A comprehensive mobile application for storm chasing hobbyist meteorologists, bu
 - **UI Components**: Custom components with theme support
 - **Testing**: Jest for unit testing
 
-## 📱 Screenshots
+## 📱 Screenshots Video Recording
 
 The app features a modern, intuitive interface with:
 - Weather dashboard with current conditions and forecast
@@ -40,6 +40,8 @@ The app features a modern, intuitive interface with:
 - Photo capture interface with metadata input
 - Detailed storm view with comprehensive information
 - Dark/light mode support
+
+[Google Drive Video Record](https://drive.google.com/file/d/1I-LKnIgKo83bZ_ZbV7LHgdfBPvmbgIMS/view?usp=drivesdk)
 
 ## 🏗 Architecture
 
@@ -266,7 +268,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-For support and questions:
+For support and questions please email to omniDevX@gmail.com, or raise issues in github:
 - Create an issue in the repository
 - Check the documentation
 - Review the code comments
