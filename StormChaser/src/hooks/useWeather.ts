@@ -1,86 +1,90 @@
-import { useEffect, useState } from 'react';
-import { getCurrentLocation, LocationData } from '../services/locationService';
+import { useState, useEffect, useCallback } from 'react';
+import { WeatherData, Location, WeatherForecast } from '../types';
 import { weatherService } from '../services/weather';
-import { ForecastData, WeatherData } from '../types';
+import { locationService } from '../services/location';
 
-export const useWeather = () => {
+interface UseWeatherReturn {
+  currentWeather: WeatherData | null;
+  forecast: WeatherForecast[];
+  location: Location | null;
+  loading: boolean;
+  error: string | null;
+  refreshWeather: () => Promise<void>;
+  refreshLocation: () => Promise<void>;
+}
+
+export const useWeather = (): UseWeatherReturn => {
   const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null);
-  const [forecast, setForecast] = useState<ForecastData[]>([]);
-  const [location, setLocation] = useState<LocationData | null>(null);
-  const [loading, setLoading] = useState(false); // Changed to false initially
+  const [forecast, setForecast] = useState<WeatherForecast[]>([]);
+  const [location, setLocation] = useState<Location | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshLocation = async () => {
+  const fetchLocation = useCallback(async () => {
     try {
-      setLoading(true);
       setError(null);
-      
-      const locationData = await getCurrentLocation();
-      setLocation(locationData);
-      
-      // Convert LocationData to the format expected by weather service
-      const weatherLocation = {
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-      };
-      
-      const weatherData = await weatherService.getCurrentWeather(weatherLocation);
-      setCurrentWeather(weatherData);
-      
-      const forecastData = await weatherService.getWeatherForecast(weatherLocation);
-      // Convert forecast data to match our types
-      const convertedForecast: ForecastData[] = forecastData.map(f => ({
-        date: f.date,
-        temperature: f.temperature,
-        weatherDescription: f.weatherDescription,
-        weatherIcon: f.weatherIcon,
-      }));
-      setForecast(convertedForecast);
-      
+      const currentLocation = await locationService.getCurrentLocation();
+      setLocation(currentLocation);
+      return currentLocation;
     } catch (err) {
-      console.error('Weather refresh error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
-      // Don't throw the error, just set it in state
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get location';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
+
+  const fetchWeather = useCallback(async (currentLocation: Location) => {
+    try {
+      setError(null);
+      const [weatherData, forecastData] = await Promise.all([
+        weatherService.getCurrentWeather(currentLocation),
+        weatherService.getWeatherForecast(currentLocation),
+      ]);
+      
+      setCurrentWeather(weatherData);
+      setForecast(forecastData);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch weather data';
+      setError(errorMessage);
+    }
+  }, []);
+
+  const refreshWeather = useCallback(async () => {
+    if (!location) return;
+    
+    setLoading(true);
+    try {
+      await fetchWeather(location);
     } finally {
       setLoading(false);
     }
-  };
+  }, [location, fetchWeather]);
 
-  const refreshWeather = async () => {
-    if (!location) return;
-    
+  const refreshLocation = useCallback(async () => {
+    setLoading(true);
     try {
-      setError(null);
-      const weatherLocation = {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      };
-      
-      const weatherData = await weatherService.getCurrentWeather(weatherLocation);
-      setCurrentWeather(weatherData);
-      
-      const forecastData = await weatherService.getWeatherForecast(weatherLocation);
-      const convertedForecast: ForecastData[] = forecastData.map(f => ({
-        date: f.date,
-        temperature: f.temperature,
-        weatherDescription: f.weatherDescription,
-        weatherIcon: f.weatherIcon,
-      }));
-      setForecast(convertedForecast);
-    } catch (err) {
-      console.error('Weather refresh error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to refresh weather data');
+      const currentLocation = await fetchLocation();
+      await fetchWeather(currentLocation);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [fetchLocation, fetchWeather]);
 
   useEffect(() => {
-    // Delay the initial weather fetch to allow app to fully initialize
-    const timer = setTimeout(() => {
-      refreshLocation();
-    }, 1000);
+    const initializeWeather = async () => {
+      setLoading(true);
+      try {
+        const currentLocation = await fetchLocation();
+        await fetchWeather(currentLocation);
+      } catch (err) {
+        // Error already set in fetchLocation
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, []);
+    initializeWeather();
+  }, [fetchLocation, fetchWeather]);
 
   return {
     currentWeather,

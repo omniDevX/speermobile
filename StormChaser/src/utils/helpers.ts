@@ -15,83 +15,37 @@ export const formatDate = (date: string | Date): string => {
   });
 };
 
-export const formatForecastDate = (dateString: string): string => {
-  const date = new Date(dateString + 'T00:00:00');
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-  
-  // Check if it's today or tomorrow
-  if (date.toDateString() === today.toDateString()) {
-    return 'Today';
-  } else if (date.toDateString() === tomorrow.toDateString()) {
-    return 'Tomorrow';
-  } else {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
-};
-
-export const formatTemperature = (temp: number | undefined | null): string => {
-  if (temp === undefined || temp === null) return 'N/A';
+export const formatTemperature = (temp: number): string => {
   return `${Math.round(temp)}°C`;
 };
 
-export const formatWindSpeed = (speed: number | undefined | null): string => {
-  if (speed === undefined || speed === null) return 'N/A';
+export const formatWindSpeed = (speed: number): string => {
   return `${Math.round(speed)} km/h`;
 };
 
-export const formatPressure = (pressure: number | undefined | null): string => {
-  if (pressure === undefined || pressure === null) return 'N/A';
+export const formatPressure = (pressure: number): string => {
   return `${Math.round(pressure)} hPa`;
 };
 
-export const formatHumidity = (humidity: number | undefined | null): string => {
-  if (humidity === undefined || humidity === null) return 'N/A';
+export const formatHumidity = (humidity: number): string => {
   return `${Math.round(humidity)}%`;
 };
 
-export const formatVisibility = (visibility: number | undefined | null): string => {
-  if (visibility === undefined || visibility === null) return 'N/A';
+export const formatVisibility = (visibility: number): string => {
   if (visibility >= 1000) {
     return `${(visibility / 1000).toFixed(1)} km`;
   }
   return `${Math.round(visibility)} m`;
 };
 
-export const getWindDirection = (degrees: number | undefined | null): string => {
-  if (degrees === undefined || degrees === null) return 'N/A';
+export const getWindDirection = (degrees: number): string => {
   const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
   const index = Math.round(degrees / 22.5) % 16;
   return directions[index];
 };
 
-const getStormTypeEnum = (stormType: string): StormType => {
-  switch (stormType.toLowerCase()) {
-    case 'thunderstorm':
-      return StormType.THUNDERSTORM;
-    case 'tornado':
-      return StormType.TORNADO;
-    case 'hurricane':
-      return StormType.HURRICANE;
-    case 'blizzard':
-      return StormType.BLIZZARD;
-    case 'dust storm':
-      return StormType.DUST_STORM;
-    case 'hail storm':
-      return StormType.HAIL_STORM;
-    default:
-      return StormType.OTHER;
-  }
-};
-
-export const getStormTypeColor = (stormType: string): string => {
-  const enumType = getStormTypeEnum(stormType);
-  switch (enumType) {
+export const getStormTypeColor = (stormType: StormType): string => {
+  switch (stormType) {
     case StormType.THUNDERSTORM:
       return '#f59e0b';
     case StormType.TORNADO:
@@ -109,9 +63,8 @@ export const getStormTypeColor = (stormType: string): string => {
   }
 };
 
-export const getStormTypeIcon = (stormType: string): string => {
-  const enumType = getStormTypeEnum(stormType);
-  switch (enumType) {
+export const getStormTypeIcon = (stormType: StormType): string => {
+  switch (stormType) {
     case StormType.THUNDERSTORM:
       return '⚡';
     case StormType.TORNADO:

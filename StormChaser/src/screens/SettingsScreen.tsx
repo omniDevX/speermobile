@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
 import React from 'react';
 import {
     Alert,
@@ -24,9 +23,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
   const theme = colorScheme === 'dark' ? 'dark' : 'light';
   const currentTheme = theme === 'dark' ? darkTheme : lightTheme;
   const { settings, updateSetting } = useSettings();
-
-  const appVersion = Constants.expoConfig?.version || '1.0.0';
-  const appName = Constants.expoConfig?.name || 'Storm Chaser';
 
   const clearData = () => {
     Alert.alert(
@@ -274,19 +270,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
           <TouchableOpacity style={styles.dangerButton} onPress={clearData}>
             <Text style={styles.dangerButtonText}>Clear All Data</Text>
           </TouchableOpacity>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-          
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingTitle}>{appName}</Text>
-              <Text style={styles.settingDescription}>
-                Version {appVersion}
-              </Text>
-            </View>
-          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

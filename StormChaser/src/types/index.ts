@@ -1,46 +1,34 @@
 export interface WeatherData {
   temperature: number;
+  feelsLike: number;
   humidity: number;
   windSpeed: number;
   windDirection: number;
   pressure: number;
   visibility: number;
+  precipitation: number;
   weatherDescription: string;
   weatherIcon: string;
   timestamp: string;
 }
 
-export interface ForecastData {
-  date: string;
-  temperature: {
-    min: number;
-    max: number;
-  };
-  weatherDescription: string;
-  weatherIcon: string;
-}
-
-export interface LocationData {
+export interface Location {
   latitude: number;
   longitude: number;
-  city?: string;
-  province?: string;
-  country?: string;
+  accuracy?: number;
+  timestamp?: string;
 }
 
 export interface StormDocumentation {
   id: string;
-  stormType: string;
   photoUri: string;
-  location: LocationData;
-  weather: WeatherData;
+  weatherConditions: WeatherData;
+  location: Location;
+  dateTime: string;
   notes: string;
-  timestamp: string;
-  metadata: {
-    deviceModel: string;
-    appVersion: string;
-    photoSize: number;
-  };
+  stormType: StormType;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum StormType {
