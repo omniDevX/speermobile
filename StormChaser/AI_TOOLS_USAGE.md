@@ -8,6 +8,7 @@ This document discloses the use of AI tools during the development of the Storm 
 - **Purpose**: Primary development assistant for this project
 - **Usage**: Code generation, architecture design, problem solving, and documentation
 
+
 ### 2. GitHub Copilot (if applicable)
 - **Purpose**: Code completion and suggestions
 - **Usage**: Real-time code suggestions during development
